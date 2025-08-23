@@ -5,12 +5,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "visitors", indexes = {
+        @Index(name = "idx_visitor_token", columnList = "token")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,6 +36,7 @@ public class Visitor {
     @Column(nullable = false)
     private String userAgent;
 
+    @LastModifiedDate
     @Column(nullable = false)
     private Instant lastUpdated;
 
