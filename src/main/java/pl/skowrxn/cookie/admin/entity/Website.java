@@ -32,7 +32,7 @@ public class Website {
     private String domain;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "banner_settings")
+    @JoinColumn(name = "banner_settings", nullable = false)
     private BannerSettings bannerSettings;
 
     @OneToMany(mappedBy = "website", fetch = FetchType.EAGER)
