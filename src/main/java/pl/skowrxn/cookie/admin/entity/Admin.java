@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users",
+@Table(name = "admins",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username")
         })
@@ -31,7 +31,7 @@ public class Admin {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "admin")
     private List<Website> websites;
 
 }
