@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.skowrxn.cookie.admin.entity.Website;
 import pl.skowrxn.cookie.admin.repository.WebsiteRepository;
 import pl.skowrxn.cookie.common.exception.ResourceNotFoundException;
-import pl.skowrxn.cookie.consent.entity.Consent;
+import pl.skowrxn.cookie.consent.entity.ConsentLog;
 import pl.skowrxn.cookie.consent.entity.Visitor;
 
 import java.io.*;
@@ -35,11 +35,11 @@ public class ConsentExportService {
             for (Visitor visitor : visitors) {
 
                 StringBuilder consents = new StringBuilder();
-                for (Consent consent : visitor.getConsents()) {
+                for (ConsentLog consentLog : visitor.getConsentLogs()) {
                     consents
-                            .append(consent.getConsentType().getKey())
+                            .append(consentLog.getConsentType().getKey())
                             .append(":")
-                            .append(consent.getStatus())
+                            .append(consentLog.getStatus())
                             .append(", ");
                 }
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
