@@ -9,9 +9,10 @@ import pl.skowrxn.cookie.admin.entity.Website;
 
 import java.util.UUID;
 
+@Entity
+@Table(name = "consent_types")
 @Getter
 @Setter
-@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConsentType {
@@ -22,7 +23,11 @@ public class ConsentType {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String key;
+
+    @Column
     private String description;
 
     @ManyToOne
