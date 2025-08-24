@@ -9,15 +9,20 @@ import lombok.Setter;
 import java.util.UUID;
 
 @Entity
+@Table(name = "constent_logs")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Consent {
+public class ConsentLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "consent_type_id")
+    private ConsentType consentType;
 
     @Column(nullable = false)
     private Boolean status;
@@ -25,9 +30,5 @@ public class Consent {
     @ManyToOne
     @JoinColumn(name="visitor_id")
     private Visitor visitor;
-
-    @ManyToOne
-    @JoinColumn(name = "consent_type_id")
-    private ConsentType consentType;
 
 }
