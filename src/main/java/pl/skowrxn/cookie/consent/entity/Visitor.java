@@ -33,7 +33,7 @@ public class Visitor {
     @Column(nullable = false)
     private String ip;
 
-    @Column(nullable = false)
+    @Column
     private String userAgent;
 
     @LastModifiedDate
@@ -41,6 +41,6 @@ public class Visitor {
     private Instant lastUpdated;
 
     @OneToMany(mappedBy = "visitor")
-    private List<Consent> consents;
+    private List<ConsentLog> consentLogs;
 
 }
