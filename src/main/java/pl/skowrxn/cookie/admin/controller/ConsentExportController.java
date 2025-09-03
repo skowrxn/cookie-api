@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.skowrxn.cookie.admin.service.ConsentExportService;
 
 @RestController
-@PreAuthorize("hasRole('ADMIN')")
-@RequestMapping("/api/admin/consents")
+@PreAuthorize("hasRole('USER')")
+@RequestMapping("/api/v1/admin/consents")
 @AllArgsConstructor
 public class ConsentExportController {
 

@@ -8,7 +8,7 @@ import pl.skowrxn.cookie.consent.dto.ConsentRequest;
 import pl.skowrxn.cookie.consent.service.ConsentService;
 
 @RestController
-@RequestMapping("api/v1/consents")
+@RequestMapping("/api/v1/public/consents")
 @AllArgsConstructor
 public class ConsentController {
 
