@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import pl.skowrxn.cookie.admin.entity.Website;
 
 import java.time.Instant;
 import java.util.List;
@@ -35,6 +36,10 @@ public class Visitor {
 
     @Column
     private String userAgent;
+
+    @JoinColumn
+    @ManyToOne
+    private Website website;
 
     @LastModifiedDate
     @Column(nullable = false)
