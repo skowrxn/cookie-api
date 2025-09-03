@@ -44,7 +44,7 @@ public class Website {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "admin_id", nullable = false)
-    private Admin admin;
+    private User user;
 
 
 }

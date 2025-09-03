@@ -2,12 +2,13 @@ package pl.skowrxn.cookie.admin.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import pl.skowrxn.cookie.admin.auth.Role;
 
 import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "admins",
+@Table(name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username")
         })
@@ -16,7 +17,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString(exclude = "password")
-public class Admin {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -31,7 +32,10 @@ public class Admin {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "admin")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @OneToMany(mappedBy = "user")
     private List<Website> websites;
 
 }
