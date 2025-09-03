@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pl.skowrxn.cookie.admin.entity.Cookie;
 import pl.skowrxn.cookie.admin.entity.Website;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -33,5 +35,8 @@ public class ConsentType {
     @ManyToOne
     @JoinColumn(name = "website_id")
     private Website website;
+
+    @OneToMany(mappedBy = "consentType", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Cookie> cookies;
 
 }
