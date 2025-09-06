@@ -48,4 +48,7 @@ public class Visitor {
     @OneToMany(mappedBy = "visitor")
     private List<ConsentLog> consentLogs;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ConsentStatus status;
 }
