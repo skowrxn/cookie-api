@@ -33,6 +33,9 @@ public class WebsiteScan {
     @CreatedDate
     private Instant scanDate;
 
+    @Column(nullable = false)
+    private boolean isSuccessful;
+
     @Column
     private int totalCookies;
 
