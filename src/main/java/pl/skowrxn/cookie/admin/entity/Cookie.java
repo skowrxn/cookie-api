@@ -1,7 +1,7 @@
 package pl.skowrxn.cookie.admin.entity;
 
 import jakarta.persistence.*;
-import pl.skowrxn.cookie.consent.entity.ConsentType;
+import pl.skowrxn.cookie.consent.entity.CookieType;
 
 import java.util.UUID;
 
@@ -12,13 +12,20 @@ public class Cookie {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column
+    private String domain;
+
+    @Column
     private String description;
 
+    @Column
+    private String duration;
+
     @ManyToOne
-    private ConsentType consentType;
+    @JoinColumn(name = "cookie_type_id")
+    private CookieType cookieType;
 
 }
