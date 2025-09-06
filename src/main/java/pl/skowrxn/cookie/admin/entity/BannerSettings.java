@@ -11,6 +11,28 @@ public class BannerSettings {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    //TODO banner appearance configuration
+    @Column(nullable = false)
+    private String rejectAllButtonText;
+
+    @Column(nullable = false)
+    private String acceptAllButtonText;
+
+    @Column(nullable = false)
+    private String saveButtonText;
+
+    @Column(nullable = false)
+    private String manageCookiesButtonText;
+
+    @Column(nullable = false)
+    private String bannerDescriptionText;
+
+    @Column(nullable = false)
+    private String bannerTitleText;
+
+    @Column(nullable = false)
+    private String primaryColor;
+
+    @Column(nullable = false)
+    private String textColor;
 
 }
