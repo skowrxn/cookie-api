@@ -13,7 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import pl.skowrxn.cookie.admin.auth.JWTUtils;
-import pl.skowrxn.cookie.admin.auth.Role;
+import pl.skowrxn.cookie.admin.entity.Role;
 import pl.skowrxn.cookie.admin.auth.request.LoginRequest;
 import pl.skowrxn.cookie.admin.auth.request.SignupRequest;
 import pl.skowrxn.cookie.admin.auth.service.UserDetailsImpl;

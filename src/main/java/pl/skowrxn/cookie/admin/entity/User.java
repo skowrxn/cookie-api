@@ -2,7 +2,6 @@ package pl.skowrxn.cookie.admin.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import pl.skowrxn.cookie.admin.auth.Role;
 
 import java.util.List;
 import java.util.UUID;
