@@ -8,9 +8,9 @@ import pl.skowrxn.cookie.common.exception.ResourceNotFoundException;
 import pl.skowrxn.cookie.consent.dto.ConsentLogDTO;
 import pl.skowrxn.cookie.consent.dto.ConsentRequest;
 import pl.skowrxn.cookie.consent.entity.ConsentLog;
-import pl.skowrxn.cookie.consent.entity.ConsentType;
+import pl.skowrxn.cookie.consent.entity.CookieType;
 import pl.skowrxn.cookie.consent.entity.Visitor;
-import pl.skowrxn.cookie.consent.repository.ConsentTypeRepository;
+import pl.skowrxn.cookie.consent.repository.CookieTypeRepository;
 import pl.skowrxn.cookie.consent.repository.VisitorRepository;
 
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ConsentServiceImpl implements ConsentService {
 
-    private ConsentTypeRepository consentTypeRepository;
+    private CookieTypeRepository cookieTypeRepository;
     private VisitorRepository visitorRepository;
     private WebsiteRepository websiteRepository;
 
@@ -41,13 +41,13 @@ public class ConsentServiceImpl implements ConsentService {
         visitor.setToken(token);
 
         for (ConsentLogDTO consentLogDTO : request.getLog()) {
-            String consentTypeKey = consentLogDTO.getName();
-            ConsentType consentType = consentTypeRepository.findConsentTypeByKey(consentTypeKey).orElseThrow(() ->
-                    new ResourceNotFoundException("consentType", "key", consentTypeKey));
+            String cookieTypeKey = consentLogDTO.getName();
+            CookieType cookieType = cookieTypeRepository.findCookieTypeByKey(cookieTypeKey).orElseThrow(() ->
+                    new ResourceNotFoundException("cookieType", "key", cookieTypeKey));
             Boolean status = consentLogDTO.getStatus().equalsIgnoreCase("yes");
 
             ConsentLog consentLog = new ConsentLog();
-            consentLog.setConsentType(consentType);
+            consentLog.setCookieType(cookieType);
             consentLog.setStatus(status);
             consentLog.setVisitor(visitor);
             consentLogs.add(consentLog);

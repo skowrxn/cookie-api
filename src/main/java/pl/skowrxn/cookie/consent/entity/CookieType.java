@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "consent_types")
+@Table(name = "cookie_types")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConsentType {
+public class CookieType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -36,7 +36,7 @@ public class ConsentType {
     @JoinColumn(name = "website_id")
     private Website website;
 
-    @OneToMany(mappedBy = "consentType", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cookieType", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Cookie> cookies;
 
 }

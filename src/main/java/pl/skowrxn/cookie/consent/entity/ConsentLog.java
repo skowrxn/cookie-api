@@ -22,7 +22,7 @@ public class ConsentLog {
 
     @ManyToOne
     @JoinColumn(name = "consent_type_id")
-    private ConsentType consentType;
+    private CookieType cookieType;
 
     @Column(nullable = false)
     private Boolean status;

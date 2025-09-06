@@ -37,7 +37,7 @@ public class ConsentExportService {
                 StringBuilder consents = new StringBuilder();
                 for (ConsentLog consentLog : visitor.getConsentLogs()) {
                     consents
-                            .append(consentLog.getConsentType().getKey())
+                            .append(consentLog.getCookieType().getKey())
                             .append(":")
                             .append(consentLog.getStatus())
                             .append(", ");
