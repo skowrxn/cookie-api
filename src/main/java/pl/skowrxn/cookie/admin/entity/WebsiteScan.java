@@ -26,15 +26,15 @@ public class WebsiteScan {
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.UUID)
     private UUID id;
 
-    @Column
-    private List<CookieType> detectedCookieTypes;
-
     @Column(nullable = false)
     @CreatedDate
     private Instant scanDate;
 
     @Column(nullable = false)
     private boolean isSuccessful;
+
+    @Column
+    private List<CookieType> detectedCookieTypes;
 
     @Column
     private int totalCookies;
