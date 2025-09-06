@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import pl.skowrxn.cookie.consent.entity.ConsentType;
+import pl.skowrxn.cookie.consent.entity.CookieType;
 import pl.skowrxn.cookie.consent.entity.Visitor;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,7 +38,7 @@ public class Website {
 
     @OneToMany(mappedBy = "website", fetch = FetchType.EAGER)
     @Fetch(FetchMode.SUBSELECT)
-    private List<ConsentType> consentTypes;
+    private List<CookieType> cookieTypes;
 
     @OneToMany(mappedBy = "website", fetch = FetchType.LAZY)
     private List<Visitor> visitors;
@@ -46,5 +47,10 @@ public class Website {
     @JoinColumn(name = "admin_id", nullable = false)
     private User user;
 
+    @Column
+    private Instant lastSuccessfulScanTime;
+
+    @Column(nullable = false)
+    private Boolean isBannerActive;
 
 }
