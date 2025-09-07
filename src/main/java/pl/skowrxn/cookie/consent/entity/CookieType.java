@@ -1,20 +1,16 @@
 package pl.skowrxn.cookie.consent.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import pl.skowrxn.cookie.admin.entity.Cookie;
-import pl.skowrxn.cookie.admin.entity.Website;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "cookie_types")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class CookieType {
@@ -23,20 +19,28 @@ public class CookieType {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "name")
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, name = "key")
     private String key;
 
-    @Column
+    @Column(name = "description", length = 1024)
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "website_id")
-    private Website website;
-
-    @OneToMany(mappedBy = "cookieType", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(mappedBy = "cookieTypes",
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+            name = "cookie_type_cookies",
+            joinColumns = @JoinColumn(name = "cookie_type_id"),
+            inverseJoinColumns = @JoinColumn(name = "cookie_id")
+    )
     private List<Cookie> cookies;
 
+    public CookieType(String name, String key, String description) {
+        this.name = name;
+        this.key = key;
+        this.description = description;
+        this.cookies = new ArrayList<>();
+    }
 }
