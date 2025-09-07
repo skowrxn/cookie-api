@@ -1,14 +1,12 @@
 package pl.skowrxn.cookie.admin.dto;
 
-import lombok.NoArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class CookieDTO {
 
     private UUID id;
@@ -17,5 +15,12 @@ public class CookieDTO {
     private String description;
     private String duration;
     private String type;
-    
+
+    public CookieDTO(String cookieKey, String domain, String expiration, String description, String type) {
+        this.name = cookieKey;
+        this.domain = domain;
+        this.duration = expiration;
+        this.description = description;
+        this.type = type;
+    }
 }
