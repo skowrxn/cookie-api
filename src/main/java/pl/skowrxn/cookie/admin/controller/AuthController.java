@@ -61,7 +61,7 @@ public class AuthController {
             logger.error("Error during user authentication: {}", e.getMessage());
             return ResponseEntity
                     .badRequest()
-                    .body(new ErrorResponse("Error: Invalid username or password! Details: " + e.getMessage()));
+                    .body(new ErrorResponse("Error: Invalid username or password!", e.getMessage()));
         }
     }
 
