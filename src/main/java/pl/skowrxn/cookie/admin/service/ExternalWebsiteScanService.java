@@ -37,15 +37,18 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
     private ModelMapper modelMapper;
     private WebsiteScanRepository websiteScanRepository;
     private CookieRepository cookieRepository;
+    private CookieTypeMetadataService cookieTypeMetadataService;
 
     private static final Logger logger = LoggerFactory.getLogger(ExternalWebsiteScanService.class);
     private final RestTemplate restTemplate;
     private static final String COOKIE_SCRIPT_SCAN_URL = "https://cookie-script.com";
 
-    public ExternalWebsiteScanService(ModelMapper modelMapper, WebsiteScanRepository websiteScanRepository, CookieRepository cookieRepository) {
+    public ExternalWebsiteScanService(ModelMapper modelMapper, WebsiteScanRepository websiteScanRepository,
+                                      CookieRepository cookieRepository, CookieTypeMetadataService cookieTypeMetadataService) {
         this.modelMapper = modelMapper;
         this.websiteScanRepository = websiteScanRepository;
         this.cookieRepository = cookieRepository;
+        this.cookieTypeMetadataService = cookieTypeMetadataService;
         this.restTemplate = new RestTemplate();
     }
 
@@ -155,7 +158,7 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
 
                 logger.debug("Parsing cookie type: {} with {} cookies", name, rows.size());
 
-                CookieType cookieType = new CookieType(name, name /*TODO: key*/, null /* TODO defaults*/);
+                CookieType cookieType = new CookieType(name, cookieTypeMetadataService.getKey(name), cookieTypeMetadataService.getDescription(name));
 
                 logger.debug("Created CookieType: {}", cookieType);
 
