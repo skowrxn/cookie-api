@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import pl.skowrxn.cookie.consent.entity.CookieType;
+import pl.skowrxn.cookie.common.entity.CookieType;
 
 import java.time.Instant;
 import java.util.List;

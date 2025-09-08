@@ -24,7 +24,7 @@ import pl.skowrxn.cookie.admin.entity.WebsiteScan;
 import pl.skowrxn.cookie.admin.exception.CookieScanException;
 import pl.skowrxn.cookie.admin.repository.CookieRepository;
 import pl.skowrxn.cookie.admin.repository.WebsiteScanRepository;
-import pl.skowrxn.cookie.consent.entity.CookieType;
+import pl.skowrxn.cookie.common.entity.CookieType;
 
 import java.util.ArrayList;
 import java.util.Date;

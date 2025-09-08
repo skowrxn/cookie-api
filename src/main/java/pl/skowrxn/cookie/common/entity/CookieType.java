@@ -1,4 +1,4 @@
-package pl.skowrxn.cookie.consent.entity;
+package pl.skowrxn.cookie.common.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

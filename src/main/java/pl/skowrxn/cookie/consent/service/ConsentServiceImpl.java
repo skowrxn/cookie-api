@@ -8,9 +8,9 @@ import pl.skowrxn.cookie.common.exception.ResourceNotFoundException;
 import pl.skowrxn.cookie.consent.dto.ConsentLogDTO;
 import pl.skowrxn.cookie.consent.dto.ConsentRequest;
 import pl.skowrxn.cookie.consent.entity.ConsentLog;
-import pl.skowrxn.cookie.consent.entity.CookieType;
+import pl.skowrxn.cookie.common.entity.CookieType;
 import pl.skowrxn.cookie.consent.entity.Visitor;
-import pl.skowrxn.cookie.consent.repository.CookieTypeRepository;
+import pl.skowrxn.cookie.common.repository.CookieTypeRepository;
 import pl.skowrxn.cookie.consent.repository.VisitorRepository;
 
 import java.util.ArrayList;

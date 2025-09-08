@@ -2,8 +2,7 @@ package pl.skowrxn.cookie.admin.entity;
 
 import jakarta.persistence.*;
 import lombok.NoArgsConstructor;
-import org.jsoup.nodes.Element;
-import pl.skowrxn.cookie.consent.entity.CookieType;
+import pl.skowrxn.cookie.common.entity.CookieType;
 
 import java.util.ArrayList;
 import java.util.List;
