@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pl.skowrxn.cookie.common.entity.CookieType;
 
 import java.util.UUID;
 
@@ -20,14 +21,14 @@ public class ConsentLog {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "consent_type_id")
     private CookieType cookieType;
 
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private Boolean status;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name="visitor_id")
     private Visitor visitor;
 
