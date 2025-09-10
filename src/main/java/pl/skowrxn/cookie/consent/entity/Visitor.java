@@ -28,27 +28,27 @@ public class Visitor {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "token", unique = true, nullable = false)
     private String token;
 
-    @Column(nullable = false)
+    @Column(name = "ip", nullable = false)
     private String ip;
 
-    @Column
+    @Column(name = "user_agent", length = 1024)
     private String userAgent;
 
-    @JoinColumn
     @ManyToOne
+    @JoinColumn(name = "website_id", nullable = false)
     private Website website;
 
     @LastModifiedDate
-    @Column(nullable = false)
-    private Instant lastUpdated;
+    @Column(name = "last_updated_time", nullable = false)
+    private Instant lastUpdatedTime;
 
     @OneToMany(mappedBy = "visitor")
     private List<ConsentLog> consentLogs;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
     private ConsentStatus status;
 }

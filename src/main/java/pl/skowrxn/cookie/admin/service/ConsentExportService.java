@@ -43,7 +43,7 @@ public class ConsentExportService {
                             .append(", ");
                 }
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                String formattedDate = visitor.getLastUpdated().atZone(ZoneOffset.UTC).format(formatter);
+                String formattedDate = visitor.getLastUpdatedTime().atZone(ZoneOffset.UTC).format(formatter);
 
                 writer.writeNext(new String[]{
                         visitor.getId().toString(),
