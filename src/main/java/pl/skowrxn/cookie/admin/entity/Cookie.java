@@ -29,12 +29,7 @@ public class Cookie {
     @Column(name = "duration")
     private String duration;
 
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "cookie_cookie_types",
-            joinColumns = @JoinColumn(name = "cookie_id"),
-            inverseJoinColumns = @JoinColumn(name = "cookie_type_id")
-    )
+    @ManyToMany(mappedBy = "cookies", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<CookieType> cookieTypes;
 
     public Cookie(String name, String domain, String description, String duration) {

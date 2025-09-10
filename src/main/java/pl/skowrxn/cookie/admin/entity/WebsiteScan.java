@@ -30,12 +30,7 @@ public class WebsiteScan {
     private boolean isSuccessful;
 
     @Column
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-            name = "website_scan_cookies",
-            joinColumns = @JoinColumn(name = "website_scan_id"),
-            inverseJoinColumns = @JoinColumn(name = "cookie_id")
-    )
+    @OneToMany(mappedBy = "websiteScan", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<CookieType> detectedCookieTypes;
 
     @Column(nullable = false, name = "total_cookies")
