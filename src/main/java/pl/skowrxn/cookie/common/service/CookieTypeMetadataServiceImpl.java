@@ -1,13 +1,15 @@
-package pl.skowrxn.cookie.admin.service;
+package pl.skowrxn.cookie.common.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class CookieTypeMetadataServiceImpl implements CookieTypeMetadataService {
 
-    private final Map<String, String> KEYS = Map.of(
+    public final Map<String, String> COOKIE_TYPES = Map.of(
             "Targeting cookies", "ad_storage",
             "Strictly Necessary cookies", "security_storage",
             "Functionality cookies", "functionality_storage",
@@ -15,7 +17,7 @@ public class CookieTypeMetadataServiceImpl implements CookieTypeMetadataService 
             "Unclassified", "other"
     );
 
-    private final Map<String, String> DESCRIPTIONS = Map.of(
+    public final Map<String, String> DESCRIPTIONS = Map.of(
             "Targeting cookies", "These cookies are used to deliver advertisements that are more relevant to you and your interests. They are also used to limit the number of times you see an advertisement as well as help measure the effectiveness of the advertising campaign.",
             "Strictly Necessary cookies", "These cookies are essential for the website to function properly. They enable basic functions like page navigation and access to secure areas of the website. The website cannot function properly without these cookies.",
             "Functionality cookies", "These cookies allow the website to remember choices you make (such as your username, language, or the region you are in) and provide enhanced, more personal features. They may also be used to provide services you have requested, such as watching a video or commenting on a blog.",
@@ -27,11 +29,21 @@ public class CookieTypeMetadataServiceImpl implements CookieTypeMetadataService 
 
     @Override
     public String getKey(String name) {
-        return KEYS.getOrDefault(name, "other");
+        return COOKIE_TYPES.getOrDefault(name, "other");
     }
 
     @Override
     public String getDescription(String cookieTypeName) {
         return DESCRIPTIONS.getOrDefault(cookieTypeName, DESCRIPTIONS.get("Unclassified"));
+    }
+
+    @Override
+    public Map<String, String> getAllCookieTypes() {
+        return COOKIE_TYPES;
+    }
+
+    @Override
+    public Map<String, String> getAllDescriptions() {
+        return DESCRIPTIONS;
     }
 }
