@@ -1,5 +1,6 @@
 package pl.skowrxn.cookie.admin.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.util.UUID;
@@ -14,6 +15,8 @@ public class CookieDTO {
     private String domain;
     private String description;
     private String duration;
+
+    @JsonIgnore
     private String type;
 
     public CookieDTO(String cookieKey, String domain, String expiration, String description, String type) {
