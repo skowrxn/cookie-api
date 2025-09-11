@@ -25,6 +25,8 @@ import pl.skowrxn.cookie.admin.exception.CookieScanException;
 import pl.skowrxn.cookie.admin.repository.CookieRepository;
 import pl.skowrxn.cookie.admin.repository.WebsiteScanRepository;
 import pl.skowrxn.cookie.common.entity.CookieType;
+import pl.skowrxn.cookie.common.service.CookieTypeMetadataService;
+import pl.skowrxn.cookie.common.service.CookieTypeService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -34,17 +36,20 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class ExternalWebsiteScanService implements WebsiteScanService {
 
-    private ModelMapper modelMapper;
-    private WebsiteScanRepository websiteScanRepository;
-    private CookieRepository cookieRepository;
-    private CookieTypeMetadataService cookieTypeMetadataService;
+    private final ModelMapper modelMapper;
+    private final WebsiteScanRepository websiteScanRepository;
+    private final CookieRepository cookieRepository;
+    private final CookieTypeMetadataService cookieTypeMetadataService;
+    private final CookieTypeService cookieTypeService;
 
     private static final Logger logger = LoggerFactory.getLogger(ExternalWebsiteScanService.class);
     private final RestTemplate restTemplate;
     private static final String COOKIE_SCRIPT_SCAN_URL = "https://cookie-script.com";
 
     public ExternalWebsiteScanService(ModelMapper modelMapper, WebsiteScanRepository websiteScanRepository,
-                                      CookieRepository cookieRepository, CookieTypeMetadataService cookieTypeMetadataService) {
+                                      CookieRepository cookieRepository, CookieTypeMetadataService cookieTypeMetadataService,
+                                      CookieTypeService cookieTypeService) {
+        this.cookieTypeService = cookieTypeService;
         this.modelMapper = modelMapper;
         this.websiteScanRepository = websiteScanRepository;
         this.cookieRepository = cookieRepository;
@@ -62,12 +67,10 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
         if (reportUrl != null) {
             try {
                 var scanResult = fetchCookieReport(reportUrl).get();
-                List<CookieType> cookieTypes = scanResult.getFirst();
                 int totalCookies = scanResult.getSecond();
-                websiteScan.setDetectedCookieTypes(cookieTypes);
+                cookieTypeService.updateCookieTypes(scanResult.getFirst());
                 websiteScan.setTotalCookies(totalCookies);
                 websiteScan.setSuccessful(true);
-                cookieTypes.forEach(c -> logger.debug("COOKIE: {}", c.toString()));
                 logger.info("Successfully scanned {} cookies for URL: {}", totalCookies, url);
             } catch (Exception e) {
                 websiteScan.setSuccessful(false);
@@ -113,7 +116,7 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
         int totalCookies = 0;
 
         try {
-            Thread.sleep(45000);
+            Thread.sleep(80000);
             ResponseEntity<String> response = restTemplate.exchange(
                     reportUrl,
                     HttpMethod.GET,
@@ -158,7 +161,9 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
 
                 logger.debug("Parsing cookie type: {} with {} cookies", name, rows.size());
 
-                CookieType cookieType = new CookieType(name, cookieTypeMetadataService.getKey(name), cookieTypeMetadataService.getDescription(name));
+                String key = cookieTypeMetadataService.getKey(name);
+                CookieType cookieType = cookieTypeService.findCookieTypeByKey(key)
+                        .orElse(new CookieType(name, key, cookieTypeMetadataService.getDescription(name)));
 
                 logger.debug("Created CookieType: {}", cookieType);
 
@@ -171,13 +176,15 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
                         String description = cells.get(5).text().trim();
                         logger.debug("Found cookie - Key: {}, Domain: {}, Expiration: {}, Description: {}", cookieKey, domain, expiration, description);
                         Cookie cookie = cookieRepository.findByNameAndDomain(cookieKey, domain).orElse(
-                                new Cookie(cookieKey, domain, description, expiration)
+                                new Cookie(cookieKey, domain, description, expiration, cookieType)
                         );
                         cookieType.getCookies().add(cookie);
-                        cookieRepository.save(cookie);
-                        cookieTypes.add(cookieType);
                         totalCookies++;
                     }
+                }
+                if (!rows.isEmpty()) {
+                    cookieTypeService.saveCookieType(cookieType);
+                    cookieTypes.add(cookieType);
                 }
                 i++;
             }
