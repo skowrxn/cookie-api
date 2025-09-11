@@ -29,10 +29,6 @@ public class WebsiteScan {
     @Column(nullable = false, name="is_successful")
     private boolean isSuccessful;
 
-    @Column
-    @OneToMany(mappedBy = "websiteScan", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<CookieType> detectedCookieTypes;
-
     @Column(nullable = false, name = "total_cookies")
     private int totalCookies;
 
