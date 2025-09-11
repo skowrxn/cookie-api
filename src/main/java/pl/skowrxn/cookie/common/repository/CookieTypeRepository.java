@@ -8,6 +8,8 @@ import java.util.UUID;
 
 public interface CookieTypeRepository extends JpaRepository<CookieType, UUID> {
 
+    Optional<CookieType> findCookieTypeById(UUID id);
+
     Optional<CookieType> findCookieTypeByKey(String key);
 
 }
