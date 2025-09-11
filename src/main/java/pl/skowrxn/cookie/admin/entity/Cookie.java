@@ -1,15 +1,17 @@
 package pl.skowrxn.cookie.admin.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import pl.skowrxn.cookie.common.entity.CookieType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "cookies")
+@Getter
+@Setter
 @NoArgsConstructor
 public class Cookie {
 
@@ -29,14 +31,14 @@ public class Cookie {
     @Column(name = "duration")
     private String duration;
 
-    @ManyToMany(mappedBy = "cookies", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<CookieType> cookieTypes;
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private CookieType cookieType;
 
-    public Cookie(String name, String domain, String description, String duration) {
+    public Cookie(String name, String domain, String description, String duration, CookieType cookieType) {
         this.name = name;
         this.domain = domain;
         this.description = description;
         this.duration = duration;
-        this.cookieTypes = new ArrayList<>();
+        this.cookieType = cookieType;
     }
 }
