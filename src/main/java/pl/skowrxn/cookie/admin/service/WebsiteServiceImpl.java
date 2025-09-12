@@ -75,11 +75,10 @@ public class WebsiteServiceImpl implements WebsiteService {
         website.setVisitors(new ArrayList<>());
         website.setDomain(domain);
         website.setUser(user);
+        website.setIsBannerActive(true);
         website = websiteRepository.save(website);
         cookieTypeService.initializeCookieTypes(website);
-        website.setIsBannerActive(true);
         //TODO initialize banner settings
-        website = websiteRepository.save(website);
         return mapToDTO(website);
     }
 
