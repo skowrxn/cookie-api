@@ -23,7 +23,7 @@ public class CookieTypeServiceImpl implements CookieTypeService {
 
     private final CookieTypeRepository cookieTypeRepository;
     private final CookieTypeMetadataService cookieTypeMetadataService;
-    private WebsiteRepository websiteRepository;
+    private final WebsiteRepository websiteRepository;
     private final ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(CookieTypeServiceImpl.class);
 
