@@ -24,22 +24,22 @@ public class Website {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, unique = true, name = "website_key")
+    @Column(name = "website_key", nullable = false, unique = true)
     private String key;
 
-    @Column(nullable = false, name = "domain")
+    @Column(name = "domain", nullable = false, unique = true)
     private String domain;
 
     @ManyToOne
-    @JoinColumn(name = "admin_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "banner_settings", nullable = false)
     private BannerSettings bannerSettings;
 
-//    @OneToMany(mappedBy = "website", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-//    private List<CookieType> cookieTypes;
+    @OneToMany(mappedBy = "website", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    private List<CookieType> cookieTypes;
 
     @OneToMany(mappedBy = "website", fetch = FetchType.LAZY)
     private List<Visitor> visitors;

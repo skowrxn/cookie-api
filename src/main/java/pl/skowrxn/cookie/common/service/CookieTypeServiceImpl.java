@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import pl.skowrxn.cookie.admin.dto.request.CookieTypeRequestDTO;
+import pl.skowrxn.cookie.admin.entity.Website;
+import pl.skowrxn.cookie.admin.repository.WebsiteRepository;
 import pl.skowrxn.cookie.common.dto.CookieTypeDTO;
 import pl.skowrxn.cookie.common.entity.CookieType;
 import pl.skowrxn.cookie.common.exception.ResourceNotFoundException;
@@ -21,11 +23,12 @@ public class CookieTypeServiceImpl implements CookieTypeService {
 
     private final CookieTypeRepository cookieTypeRepository;
     private final CookieTypeMetadataService cookieTypeMetadataService;
+    private WebsiteRepository websiteRepository;
     private final ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(CookieTypeServiceImpl.class);
 
     @Override
-    public void initializeCookieTypes() {
+    public void initializeCookieTypes(Website website) {
         List<String> existingCookieTypes = cookieTypeRepository.findAll().stream().map(CookieType::getName).toList();
         Set<String> allCookieTypes = cookieTypeMetadataService.getAllCookieTypes().keySet();
         if(existingCookieTypes.size() == allCookieTypes.size()) return;
@@ -37,6 +40,7 @@ public class CookieTypeServiceImpl implements CookieTypeService {
                     CookieType newCookieType = new CookieType();
                     newCookieType.setName(cookieTypeName);
                     newCookieType.setKey(key);
+                    newCookieType.setWebsite(website);
                     newCookieType.setDescription(description);
                     cookieTypeRepository.save(newCookieType);
                     logger.debug("Initialized new cookie type: {}", cookieTypeName);
@@ -44,8 +48,11 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     }
 
     @Override
-    public List<CookieTypeDTO> getAllCookieTypes() {
-        return cookieTypeRepository.findAll().stream()
+    public List<CookieTypeDTO> getAllCookieTypes(UUID websiteId) {
+        Website website = websiteRepository.findById(websiteId).orElseThrow(
+                () -> new ResourceNotFoundException("Website", "id", websiteId.toString()));
+
+        return cookieTypeRepository.findCookieTypesByWebsite(website).stream()
                 .map(cookieType -> modelMapper.map(cookieType, CookieTypeDTO.class))
                 .toList();
     }
@@ -58,8 +65,15 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     }
 
     @Override
-    public Optional<CookieType> findCookieTypeByKey(String key) {
-        return cookieTypeRepository.findCookieTypeByKey(key);
+    public Optional<CookieType> findCookieTypeByKey(UUID websiteId, String key) {
+        Website website = websiteRepository.findById(websiteId).orElseThrow(
+                () -> new ResourceNotFoundException("Website", "id", websiteId.toString()));
+        return cookieTypeRepository.findCookieTypeByWebsiteAndKey(website, key);
+    }
+
+    @Override
+    public Optional<CookieType> findCookieTypeByKey(Website website, String key) {
+        return cookieTypeRepository.findCookieTypeByWebsiteAndKey(website, key);
     }
 
     @Override
@@ -98,10 +112,13 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     }
 
     @Override
-    public CookieTypeDTO createCookieType(CookieTypeRequestDTO cookieTypeRequestDTO) {
+    public CookieTypeDTO createCookieType(UUID websiteId, CookieTypeRequestDTO cookieTypeRequestDTO) {
+        Website website = websiteRepository.findById(websiteId).orElseThrow(
+                () -> new ResourceNotFoundException("Website", "id", websiteId.toString()));
         CookieType cookieType = new CookieType();
         cookieType.setName(cookieTypeRequestDTO.getName());
         cookieType.setKey(cookieTypeRequestDTO.getKey());
+        cookieType.setWebsite(website);
         cookieType.setDescription(cookieTypeRequestDTO.getDescription());
         cookieType.setCookies(new HashSet<>());
         CookieType savedCookieType = cookieTypeRepository.save(cookieType);

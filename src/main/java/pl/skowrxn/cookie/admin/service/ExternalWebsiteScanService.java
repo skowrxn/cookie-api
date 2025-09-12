@@ -20,27 +20,33 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import pl.skowrxn.cookie.admin.dto.WebsiteScanDTO;
 import pl.skowrxn.cookie.admin.entity.Cookie;
+import pl.skowrxn.cookie.admin.entity.Website;
 import pl.skowrxn.cookie.admin.entity.WebsiteScan;
 import pl.skowrxn.cookie.admin.exception.CookieScanException;
 import pl.skowrxn.cookie.admin.repository.CookieRepository;
+import pl.skowrxn.cookie.admin.repository.WebsiteRepository;
 import pl.skowrxn.cookie.admin.repository.WebsiteScanRepository;
 import pl.skowrxn.cookie.common.entity.CookieType;
+import pl.skowrxn.cookie.common.exception.ResourceNotFoundException;
 import pl.skowrxn.cookie.common.service.CookieTypeMetadataService;
 import pl.skowrxn.cookie.common.service.CookieTypeService;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ExternalWebsiteScanService implements WebsiteScanService {
 
-    private final ModelMapper modelMapper;
     private final WebsiteScanRepository websiteScanRepository;
+    private final WebsiteRepository websiteRepository;
     private final CookieRepository cookieRepository;
     private final CookieTypeMetadataService cookieTypeMetadataService;
     private final CookieTypeService cookieTypeService;
+
+    private final ModelMapper modelMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(ExternalWebsiteScanService.class);
     private final RestTemplate restTemplate;
@@ -48,17 +54,22 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
 
     public ExternalWebsiteScanService(ModelMapper modelMapper, WebsiteScanRepository websiteScanRepository,
                                       CookieRepository cookieRepository, CookieTypeMetadataService cookieTypeMetadataService,
-                                      CookieTypeService cookieTypeService) {
+                                      CookieTypeService cookieTypeService, WebsiteRepository websiteRepository) {
         this.cookieTypeService = cookieTypeService;
         this.modelMapper = modelMapper;
         this.websiteScanRepository = websiteScanRepository;
         this.cookieRepository = cookieRepository;
         this.cookieTypeMetadataService = cookieTypeMetadataService;
+        this.websiteRepository = websiteRepository;
         this.restTemplate = new RestTemplate();
     }
 
     @Override
-    public WebsiteScanDTO scanCookies(String url) {
+    public WebsiteScanDTO scanCookies(UUID websiteId) {
+        Website website = websiteRepository.findById(websiteId).orElseThrow(
+                () -> new ResourceNotFoundException("Website", "id", websiteId.toString())
+        );
+        String url = website.getDomain();
         logger.info("Starting cookie scan for URL: {}", url);
         WebsiteScan websiteScan = new WebsiteScan();
         websiteScan.setScanTime(new Date().toInstant());
@@ -66,7 +77,7 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
         String reportUrl = initiateCookieScan(url);
         if (reportUrl != null) {
             try {
-                var scanResult = fetchCookieReport(reportUrl).get();
+                var scanResult = fetchCookieReport(website, reportUrl).get();
                 int totalCookies = scanResult.getSecond();
                 cookieTypeService.updateCookieTypes(scanResult.getFirst());
                 websiteScan.setTotalCookies(totalCookies);
@@ -110,7 +121,7 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
     }
 
     @Async
-    public CompletableFuture<Pair<List<CookieType>, Integer>> fetchCookieReport(String reportUrl) {
+    public CompletableFuture<Pair<List<CookieType>, Integer>> fetchCookieReport(Website website, String reportUrl) {
         logger.debug("Fetching cookie report from URL: {}", reportUrl);
         List<CookieType> cookieTypes = new ArrayList<>();
         int totalCookies = 0;
@@ -125,7 +136,7 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
 
             String reportHtml = response.getBody();
             if (reportHtml != null) {
-                var result = parseCookiesFromHtml(reportHtml);
+                var result = parseCookiesFromHtml(website, reportHtml);
                 cookieTypes = result.getFirst();
                 totalCookies = result.getSecond();
                 logger.debug("Successfully parsed {} cookies from report", cookieTypes.size());
@@ -140,14 +151,14 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
         return CompletableFuture.completedFuture(Pair.of(cookieTypes, totalCookies));
     }
 
-    private Pair<List<CookieType>, Integer> parseCookiesFromHtml(String html) {
+    private Pair<List<CookieType>, Integer> parseCookiesFromHtml(Website website, String html) {
         logger.debug("Starting HTML parsing for cookies");
         List<CookieType> cookieTypes = new ArrayList<>();
         int totalCookies = 0;
 
         try {
             Document doc = Jsoup.parse(html);
-            Element reportBox = doc.select("div.reportbox").get(0);
+            Element reportBox = doc.select("div.reportbox").getFirst();
 
             Elements titles = reportBox.select("h3.reporttitle");
             Elements tables = reportBox.select("table.reporttable");
@@ -162,8 +173,8 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
                 logger.debug("Parsing cookie type: {} with {} cookies", name, rows.size());
 
                 String key = cookieTypeMetadataService.getKey(name);
-                CookieType cookieType = cookieTypeService.findCookieTypeByKey(key)
-                        .orElse(new CookieType(name, key, cookieTypeMetadataService.getDescription(name)));
+                CookieType cookieType = cookieTypeService.findCookieTypeByKey(website, key)
+                        .orElse(new CookieType(name, key, website, cookieTypeMetadataService.getDescription(name)));
 
                 logger.debug("Created CookieType: {}", cookieType);
 
