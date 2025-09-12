@@ -32,6 +32,7 @@ public class Cookie {
     private String duration;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "cookie_type_id", nullable = false)
     private CookieType cookieType;
 
     public Cookie(String name, String domain, String description, String duration, CookieType cookieType) {
