@@ -48,16 +48,6 @@ public class WebsiteServiceImpl implements WebsiteService {
         return mapToDTO(website);
     }
 
-
-    @Override
-    @Transactional
-    public WebsiteDTO setLastSuccessfulScanTime(UUID id, Instant time) {
-        Website website = getWebsiteEntityById(id);
-        website.setLastSuccessfulScanTime(time);
-        websiteRepository.save(website);
-        return mapToDTO(website);
-    }
-
     @Override
     @Transactional
     public WebsiteDTO setBannerStatus(UUID id, boolean isActive) {

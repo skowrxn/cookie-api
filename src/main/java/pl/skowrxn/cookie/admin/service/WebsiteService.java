@@ -18,8 +18,6 @@ public interface WebsiteService {
 
     WebsiteDTO createWebsite(String domain, User user);
 
-    WebsiteDTO setLastSuccessfulScanTime(UUID id, Instant time);
-
     WebsiteDTO setBannerStatus(UUID id, boolean isActive);
 
     List<WebsiteDTO> getWebsitesByUserId(UUID id);

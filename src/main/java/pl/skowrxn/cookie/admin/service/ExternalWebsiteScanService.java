@@ -82,6 +82,9 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
                 cookieTypeService.updateCookieTypes(scanResult.getFirst());
                 websiteScan.setTotalCookies(totalCookies);
                 websiteScan.setSuccessful(true);
+
+                website.setLastSuccessfulScanTime(new Date().toInstant());
+                websiteRepository.save(website);
                 logger.info("Successfully scanned {} cookies for URL: {}", totalCookies, url);
             } catch (Exception e) {
                 websiteScan.setSuccessful(false);
