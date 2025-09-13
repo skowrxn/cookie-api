@@ -35,7 +35,7 @@ public class Website {
     private User user;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    @JoinColumn(name = "banner_settings", nullable = false)
+    @JoinColumn(name = "banner_settings_id", nullable = false)
     private BannerSettings bannerSettings;
 
     @OneToMany(mappedBy = "website", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
