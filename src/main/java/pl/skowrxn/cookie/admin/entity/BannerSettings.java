@@ -1,11 +1,15 @@
 package pl.skowrxn.cookie.admin.entity;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "banner_settings")
+@Getter
+@Setter
 public class BannerSettings {
 
     @Id
@@ -21,8 +25,8 @@ public class BannerSettings {
     @Column(name = "save_button_text", nullable = false)
     private String saveButtonText;
 
-    @Column(name = "manage_cookies_button_text", nullable = false)
-    private String manageCookiesButtonText;
+    @Column(name = "customise_cookies_button_text", nullable = false)
+    private String customiseCookiesButtonText;
 
     @Column(name = "banner_description_text", nullable = false)
     private String bannerDescriptionText;

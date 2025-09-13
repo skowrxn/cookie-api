@@ -14,7 +14,7 @@ public class BannerSettingsDTO {
     private String rejectAllButtonText;
     private String acceptAllButtonText;
     private String saveButtonText;
-    private String manageCookiesButtonText;
+    private String customiseCookiesButtonText;
     private String bannerDescriptionText;
     private String bannerTitleText;
     private String primaryColor;
