@@ -45,10 +45,11 @@ public class Visitor {
     @Column(name = "last_updated_time", nullable = false)
     private Instant lastUpdatedTime;
 
-    @OneToMany(mappedBy = "visitor")
+    @OneToMany(mappedBy = "visitor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConsentLog> consentLogs;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private ConsentStatus status;
+
 }
