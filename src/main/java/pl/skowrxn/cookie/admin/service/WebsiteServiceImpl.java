@@ -1,5 +1,6 @@
 package pl.skowrxn.cookie.admin.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class WebsiteServiceImpl implements WebsiteService {
     private final ModelMapper modelMapper;
 
     @Override
+    @Transactional
     public void deleteWebsiteById(UUID id) {
         Website website = getWebsiteEntityById(id);
         websiteRepository.delete(website);
@@ -48,6 +50,7 @@ public class WebsiteServiceImpl implements WebsiteService {
 
 
     @Override
+    @Transactional
     public WebsiteDTO setLastSuccessfulScanTime(UUID id, Instant time) {
         Website website = getWebsiteEntityById(id);
         website.setLastSuccessfulScanTime(time);
@@ -56,6 +59,7 @@ public class WebsiteServiceImpl implements WebsiteService {
     }
 
     @Override
+    @Transactional
     public WebsiteDTO setBannerStatus(UUID id, boolean isActive) {
         Website website = getWebsiteEntityById(id);
         website.setIsBannerActive(isActive);
@@ -64,6 +68,7 @@ public class WebsiteServiceImpl implements WebsiteService {
     }
 
     @Override
+    @Transactional
     public WebsiteDTO createWebsite(String domain, User user) {
         Website website = new Website();
         website.setKey(generateSiteKey());

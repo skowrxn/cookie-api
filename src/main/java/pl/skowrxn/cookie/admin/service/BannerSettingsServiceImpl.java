@@ -1,5 +1,6 @@
 package pl.skowrxn.cookie.admin.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,7 @@ public class BannerSettingsServiceImpl implements BannerSettingsService {
     }
 
     @Override
+    @Transactional
     public BannerSettingsDTO updateBannerSettings(UUID websiteId, BannerSettingsDTO bannerSettingsDTO) {
         Website website = websiteRepository.findById(websiteId).orElseThrow(() ->
                 new ResourceNotFoundException("Website", "id", websiteId.toString()));

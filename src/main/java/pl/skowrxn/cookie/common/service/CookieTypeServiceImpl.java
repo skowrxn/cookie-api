@@ -30,6 +30,7 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     private static final Logger logger = LoggerFactory.getLogger(CookieTypeServiceImpl.class);
 
     @Override
+    @Transactional
     public void initializeCookieTypes(Website website) {
         List<String> existingCookieTypes = cookieTypeRepository.findAll().stream().map(CookieType::getName).toList();
         Set<String> allCookieTypes = cookieTypeMetadataService.getAllCookieTypes().keySet();
@@ -79,6 +80,7 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     }
 
     @Override
+    @Transactional
     public CookieTypeDTO updateCookieType(UUID id, CookieTypeRequestDTO cookieTypeDTO) {
         CookieType existingCookieType = cookieTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("CookieType", "id", id.toString()));
@@ -97,6 +99,7 @@ public class CookieTypeServiceImpl implements CookieTypeService {
 
 
     @Override
+    @Transactional
     public void updateCookieTypes(List<CookieType> cookieTypes) {
         Map<UUID, CookieType> cookieTypeMap = cookieTypes.stream()
                 .collect(Collectors.toMap(CookieType::getId, Function.identity()));
@@ -111,6 +114,7 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     }
 
     @Override
+    @Transactional
     public void deleteCookieType(UUID id) {
         CookieType cookieType = cookieTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("CookieType", "id", id.toString()));
@@ -118,6 +122,7 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     }
 
     @Override
+    @Transactional
     public CookieTypeDTO createCookieType(UUID websiteId, CookieTypeRequestDTO cookieTypeRequestDTO) {
         Website website = websiteRepository.findById(websiteId).orElseThrow(
                 () -> new ResourceNotFoundException("Website", "id", websiteId.toString()));
@@ -135,6 +140,7 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     }
 
     @Override
+    @Transactional
     public void saveCookieType(CookieType cookieType) {
         Optional<CookieType> optionalDuplicate = cookieTypeRepository.findCookieTypeByKey(cookieType.getKey());
         if (optionalDuplicate.isPresent() && !optionalDuplicate.get().getId().equals(cookieType.getId())) {

@@ -1,5 +1,6 @@
 package pl.skowrxn.cookie.consent.service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.skowrxn.cookie.admin.entity.Website;
@@ -24,6 +25,8 @@ public class ConsentServiceImpl implements ConsentService {
     private VisitorRepository visitorRepository;
     private WebsiteRepository websiteRepository;
 
+    @Override
+    @Transactional
     public void saveConsent(ConsentRequest request, String ip, String userAgent) {
         String siteKey = request.getKey();
         Website website = websiteRepository.findWebsiteByKey(siteKey)
