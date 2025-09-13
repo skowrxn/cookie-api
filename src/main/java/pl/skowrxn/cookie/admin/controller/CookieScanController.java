@@ -18,7 +18,7 @@ public class CookieScanController {
     private final WebsiteScanService service;
 
     @PostMapping
-    public ResponseEntity<WebsiteScanDTO> scanWebsite(@RequestParam UUID websiteId)  {
+    public ResponseEntity<WebsiteScanDTO> scanWebsite(@PathVariable UUID websiteId)  {
         WebsiteScanDTO scanResult = service.scanCookies(websiteId);
         return ResponseEntity.ok(scanResult);
     }
