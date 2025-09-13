@@ -24,6 +24,4 @@ public interface WebsiteService {
 
     List<WebsiteDTO> getWebsitesByUserId(UUID id);
 
-    Website getWebsiteEntityById(UUID id);
-
 }

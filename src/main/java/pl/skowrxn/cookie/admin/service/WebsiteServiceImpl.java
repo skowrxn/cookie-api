@@ -22,7 +22,7 @@ public class WebsiteServiceImpl implements WebsiteService {
 
     private final WebsiteRepository websiteRepository;
     private final CookieTypeService cookieTypeService;
-    private BannerSettingsService bannerSettingsService;
+    private final BannerSettingsService bannerSettingsService;
 
     private final ModelMapper modelMapper;
 
@@ -77,8 +77,7 @@ public class WebsiteServiceImpl implements WebsiteService {
         return mapToDTO(website);
     }
 
-    @Override
-    public Website getWebsiteEntityById(UUID id) {
+    private Website getWebsiteEntityById(UUID id) {
         return websiteRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException("Website", "id", id.toString())
         );
