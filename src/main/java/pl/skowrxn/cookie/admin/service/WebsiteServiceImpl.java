@@ -10,8 +10,10 @@ import pl.skowrxn.cookie.admin.repository.WebsiteRepository;
 import pl.skowrxn.cookie.common.exception.ResourceNotFoundException;
 import pl.skowrxn.cookie.common.service.CookieTypeService;
 
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -20,22 +22,19 @@ public class WebsiteServiceImpl implements WebsiteService {
 
     private final WebsiteRepository websiteRepository;
     private final CookieTypeService cookieTypeService;
+    private BannerSettingsService bannerSettingsService;
 
     private final ModelMapper modelMapper;
 
     @Override
-    public void deleteWebsiteDataById(UUID id) {
-        Website website = websiteRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Website", "id", id.toString())
-        );
+    public void deleteWebsiteById(UUID id) {
+        Website website = getWebsiteEntityById(id);
         websiteRepository.delete(website);
     }
 
     @Override
     public WebsiteDTO getWebsiteById(UUID id) {
-        Website website = websiteRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Website", "id", id.toString())
-        );
+        Website website = getWebsiteEntityById(id);
         return mapToDTO(website);
     }
 
@@ -50,9 +49,7 @@ public class WebsiteServiceImpl implements WebsiteService {
 
     @Override
     public WebsiteDTO setLastSuccessfulScanTime(UUID id, Instant time) {
-        Website website = websiteRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Website", "id", id.toString())
-        );
+        Website website = getWebsiteEntityById(id);
         website.setLastSuccessfulScanTime(time);
         websiteRepository.save(website);
         return mapToDTO(website);
@@ -60,9 +57,7 @@ public class WebsiteServiceImpl implements WebsiteService {
 
     @Override
     public WebsiteDTO setBannerStatus(UUID id, boolean isActive) {
-        Website website = websiteRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException("Website", "id", id.toString())
-        );
+        Website website = getWebsiteEntityById(id);
         website.setIsBannerActive(isActive);
         websiteRepository.save(website);
         return mapToDTO(website);
@@ -71,18 +66,41 @@ public class WebsiteServiceImpl implements WebsiteService {
     @Override
     public WebsiteDTO createWebsite(String domain, User user) {
         Website website = new Website();
-        website.setKey("");
+        website.setKey(generateSiteKey());
         website.setVisitors(new ArrayList<>());
         website.setDomain(domain);
         website.setUser(user);
+        website.setBannerSettings(bannerSettingsService.getDefaultSettings());
         website.setIsBannerActive(true);
         website = websiteRepository.save(website);
         cookieTypeService.initializeCookieTypes(website);
-        //TODO initialize banner settings
         return mapToDTO(website);
+    }
+
+    @Override
+    public Website getWebsiteEntityById(UUID id) {
+        return websiteRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Website", "id", id.toString())
+        );
+    }
+
+    @Override
+    public List<WebsiteDTO> getWebsitesByUserId(UUID id) {
+        return websiteRepository.getWebsitesByUser_Id(id).stream().map(this::mapToDTO).toList();
+    }
+
+    private String generateSiteKey() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder key = new StringBuilder();
+        String chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+        for (int i = 0; i < 16; i++) {
+            key.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return key.toString();
     }
 
     private WebsiteDTO mapToDTO(Website website) {
         return modelMapper.map(website, WebsiteDTO.class);
     }
+
 }
