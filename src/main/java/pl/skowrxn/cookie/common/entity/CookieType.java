@@ -20,11 +20,11 @@ public class CookieType {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, name = "name")
-    private String name;
-
-    @Column(nullable = false, name = "key")
+    @Column(name = "key", nullable = false, unique = true)
     private String key;
+
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "description", length = 1024)
     private String description;

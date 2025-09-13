@@ -18,4 +18,5 @@ public interface CookieTypeRepository extends JpaRepository<CookieType, UUID> {
 
     List<CookieType> findCookieTypesByWebsite(Website website);
 
+    boolean existsCookieTypeByKey(String key);
 }

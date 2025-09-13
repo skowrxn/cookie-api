@@ -1,5 +1,6 @@
 package pl.skowrxn.cookie.common.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import pl.skowrxn.cookie.admin.entity.Website;
 import pl.skowrxn.cookie.admin.repository.WebsiteRepository;
 import pl.skowrxn.cookie.common.dto.CookieTypeDTO;
 import pl.skowrxn.cookie.common.entity.CookieType;
+import pl.skowrxn.cookie.common.exception.BadRequestException;
 import pl.skowrxn.cookie.common.exception.ResourceNotFoundException;
 import pl.skowrxn.cookie.common.repository.CookieTypeRepository;
 
@@ -80,6 +82,10 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     public CookieTypeDTO updateCookieType(UUID id, CookieTypeRequestDTO cookieTypeDTO) {
         CookieType existingCookieType = cookieTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("CookieType", "id", id.toString()));
+        Optional<CookieType> optionalDuplicate = cookieTypeRepository.findCookieTypeByKey(cookieTypeDTO.getKey());
+        if (optionalDuplicate.isPresent() && !optionalDuplicate.get().getId().equals(cookieTypeDTO.getId())) {
+            throw new BadRequestException("Cookie type with key " + cookieTypeDTO.getKey() + " already exists.");
+        }
 
         existingCookieType.setName(cookieTypeDTO.getName());
         existingCookieType.setKey(cookieTypeDTO.getKey());
@@ -115,6 +121,9 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     public CookieTypeDTO createCookieType(UUID websiteId, CookieTypeRequestDTO cookieTypeRequestDTO) {
         Website website = websiteRepository.findById(websiteId).orElseThrow(
                 () -> new ResourceNotFoundException("Website", "id", websiteId.toString()));
+        if (cookieTypeRepository.existsCookieTypeByKey(cookieTypeRequestDTO.getKey())){
+            throw new BadRequestException("Cookie type with key " + cookieTypeRequestDTO.getKey() + " already exists.");
+        }
         CookieType cookieType = new CookieType();
         cookieType.setName(cookieTypeRequestDTO.getName());
         cookieType.setKey(cookieTypeRequestDTO.getKey());
@@ -127,6 +136,10 @@ public class CookieTypeServiceImpl implements CookieTypeService {
 
     @Override
     public void saveCookieType(CookieType cookieType) {
+        Optional<CookieType> optionalDuplicate = cookieTypeRepository.findCookieTypeByKey(cookieType.getKey());
+        if (optionalDuplicate.isPresent() && !optionalDuplicate.get().getId().equals(cookieType.getId())) {
+            throw new BadRequestException("Cookie type with key " + cookieType.getKey() + " already exists.");
+        }
         cookieTypeRepository.save(cookieType);
     }
 }
