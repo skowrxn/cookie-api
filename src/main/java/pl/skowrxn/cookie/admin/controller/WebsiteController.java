@@ -10,6 +10,7 @@ import pl.skowrxn.cookie.admin.dto.WebsiteDTO;
 import pl.skowrxn.cookie.admin.entity.User;
 import pl.skowrxn.cookie.admin.service.WebsiteService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -28,7 +29,7 @@ public class WebsiteController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWebsite(@PathVariable UUID id) {
-        websiteService.deleteWebsiteDataById(id);
+        websiteService.deleteWebsiteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
@@ -36,6 +37,12 @@ public class WebsiteController {
     public ResponseEntity<WebsiteDTO> updateBannerStatus(@PathVariable UUID id,
                                                          @RequestParam boolean isActive) {
         return ResponseEntity.ok(websiteService.setBannerStatus(id, isActive));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<WebsiteDTO>> getAllWebsites() {
+        User user = authUtil.getLoggedInUser();
+        return ResponseEntity.ok(websiteService.getWebsitesByUserId(user.getId()));
     }
 
     @PostMapping
