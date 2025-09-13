@@ -17,8 +17,7 @@ import java.util.UUID;
 public class WebsiteScanDTO {
 
     private UUID id;
-    private List<CookieTypeDTO> detectedCookieTypes;
-    private Instant scanDate;
+    private Instant scanTime;
     private boolean isSuccessful;
     private int totalCookies;
 
