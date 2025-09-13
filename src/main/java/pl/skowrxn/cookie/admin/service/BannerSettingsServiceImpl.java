@@ -7,6 +7,7 @@ import pl.skowrxn.cookie.admin.dto.BannerSettingsDTO;
 import pl.skowrxn.cookie.admin.entity.BannerSettings;
 import pl.skowrxn.cookie.admin.entity.Website;
 import pl.skowrxn.cookie.admin.repository.BannerSettingsRepository;
+import pl.skowrxn.cookie.admin.repository.WebsiteRepository;
 import pl.skowrxn.cookie.common.exception.ResourceNotFoundException;
 
 import java.util.UUID;
@@ -16,7 +17,7 @@ import java.util.UUID;
 public class BannerSettingsServiceImpl implements BannerSettingsService {
 
     private final BannerSettingsRepository bannerSettingsRepository;
-    private final WebsiteService websiteService;
+    private final WebsiteRepository websiteRepository;
 
     private final ModelMapper modelMapper;
 
@@ -36,7 +37,8 @@ public class BannerSettingsServiceImpl implements BannerSettingsService {
 
     @Override
     public BannerSettingsDTO getBannerSettingsByWebsiteId(UUID websiteId) {
-        Website website = websiteService.getWebsiteEntityById(websiteId);
+        Website website = websiteRepository.findById(websiteId).orElseThrow(() ->
+                new ResourceNotFoundException("Website", "id", websiteId.toString()));
         BannerSettings bannerSettings = bannerSettingsRepository.findById(website.getBannerSettings().getId()).
                 orElseThrow(() -> new ResourceNotFoundException("BannerSettings", "id",
                         website.getBannerSettings().getId().toString()));
@@ -45,7 +47,8 @@ public class BannerSettingsServiceImpl implements BannerSettingsService {
 
     @Override
     public BannerSettingsDTO updateBannerSettings(UUID websiteId, BannerSettingsDTO bannerSettingsDTO) {
-        Website website = websiteService.getWebsiteEntityById(websiteId);
+        Website website = websiteRepository.findById(websiteId).orElseThrow(() ->
+                new ResourceNotFoundException("Website", "id", websiteId.toString()));
         BannerSettings bannerSettings = bannerSettingsRepository.findById(website.getBannerSettings().getId()).
                 orElseThrow(() -> new ResourceNotFoundException("BannerSettings", "id",
                         website.getBannerSettings().getId().toString()));
