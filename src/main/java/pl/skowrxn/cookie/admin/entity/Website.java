@@ -38,10 +38,10 @@ public class Website {
     @JoinColumn(name = "banner_settings", nullable = false)
     private BannerSettings bannerSettings;
 
-    @OneToMany(mappedBy = "website", fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @OneToMany(mappedBy = "website", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<CookieType> cookieTypes;
 
-    @OneToMany(mappedBy = "website", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "website", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Visitor> visitors;
 
     @Column(name = "last_successful_scan_time")
