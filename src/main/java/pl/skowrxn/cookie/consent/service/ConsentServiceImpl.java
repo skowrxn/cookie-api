@@ -7,7 +7,7 @@ import pl.skowrxn.cookie.admin.entity.Website;
 import pl.skowrxn.cookie.admin.repository.WebsiteRepository;
 import pl.skowrxn.cookie.common.exception.ResourceNotFoundException;
 import pl.skowrxn.cookie.common.service.CookieTypeService;
-import pl.skowrxn.cookie.consent.dto.ConsentLogDTO;
+import pl.skowrxn.cookie.consent.dto.ConsentLogRequestDTO;
 import pl.skowrxn.cookie.consent.dto.ConsentRequest;
 import pl.skowrxn.cookie.consent.entity.ConsentLog;
 import pl.skowrxn.cookie.common.entity.CookieType;
@@ -17,6 +17,7 @@ import pl.skowrxn.cookie.consent.repository.VisitorRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,7 +32,7 @@ public class ConsentServiceImpl implements ConsentService {
     @Transactional
     public void saveConsent(ConsentRequest request, String ip, String userAgent) {
         Website website = findWebsiteByKey(request.getKey());
-        Visitor visitor = findOrCreateVisitor(request.getConsent_id(), ip, userAgent);
+        Visitor visitor = findOrCreateVisitor(request.getConsent_id(), website.getId(), ip, userAgent);
 
         List<ConsentLog> consentLogs = createConsentLogs(request.getLog(), website, visitor);
         ConsentStatus consentStatus = determineConsentStatus(consentLogs);
@@ -48,24 +49,25 @@ public class ConsentServiceImpl implements ConsentService {
                 .orElseThrow(() -> new ResourceNotFoundException("website", "key", siteKey));
     }
 
-    private Visitor findOrCreateVisitor(String token, String ip, String userAgent) {
-        Visitor visitor = visitorRepository.findVisitorByToken(token).orElseGet(Visitor::new);
+    private Visitor findOrCreateVisitor(String consentId, UUID websiteId, String ip, String userAgent) {
+        Visitor visitor = visitorRepository.findVisitorByWebsite_IdAndConsentId(websiteId, consentId)
+                .orElseGet(Visitor::new);
         visitor.setUserAgent(userAgent == null ? visitor.getUserAgent() : userAgent);
         visitor.setIp(ip);
-        visitor.setToken(token);
+        visitor.setConsentId(consentId);
         if (visitor.getConsentLogs() == null) {
             visitor.setConsentLogs(new ArrayList<>());
         }
         return visitor;
     }
 
-    private List<ConsentLog> createConsentLogs(List<ConsentLogDTO> logDTOs, Website website, Visitor visitor) {
+    private List<ConsentLog> createConsentLogs(List<ConsentLogRequestDTO> logDTOs, Website website, Visitor visitor) {
         return logDTOs.stream()
                 .map(dto -> createConsentLog(dto, website, visitor))
                 .collect(Collectors.toList());
     }
 
-    private ConsentLog createConsentLog(ConsentLogDTO dto, Website website, Visitor visitor) {
+    private ConsentLog createConsentLog(ConsentLogRequestDTO dto, Website website, Visitor visitor) {
         String cookieTypeKey = dto.getName();
         CookieType cookieType = cookieTypeService.findCookieTypeByKey(website, cookieTypeKey)
                 .orElseThrow(() -> new ResourceNotFoundException("CookieType", "key", cookieTypeKey));
