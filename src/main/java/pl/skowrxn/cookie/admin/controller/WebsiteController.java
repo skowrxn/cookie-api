@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.skowrxn.cookie.admin.auth.AuthUtil;
 import pl.skowrxn.cookie.admin.dto.WebsiteDTO;
+import pl.skowrxn.cookie.admin.dto.response.WebsiteDetailsResponse;
 import pl.skowrxn.cookie.admin.entity.User;
 import pl.skowrxn.cookie.admin.service.WebsiteService;
 
@@ -23,8 +24,8 @@ public class WebsiteController {
     private final AuthUtil authUtil;
 
     @GetMapping("/{id}")
-    public ResponseEntity<WebsiteDTO> getWebsiteById(@PathVariable UUID id) {
-        return ResponseEntity.ok(websiteService.getWebsiteById(id));
+    public ResponseEntity<WebsiteDetailsResponse> getWebsiteDetailsById(@PathVariable UUID id) {
+        return ResponseEntity.ok(websiteService.getWebsiteDetailsById(id));
     }
 
     @DeleteMapping("/{id}")
