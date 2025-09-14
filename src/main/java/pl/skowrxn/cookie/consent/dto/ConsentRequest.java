@@ -16,7 +16,7 @@ public class ConsentRequest {
     @NotNull(message = "Log cannot be null")
     @NotEmpty(message = "Log cannot be empty")
     @Valid
-    private List<ConsentLogDTO> log;
+    private List<ConsentLogRequestDTO> log;
 
     @NotBlank(message = "Website key is required")
     private String key;
