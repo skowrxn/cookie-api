@@ -7,19 +7,26 @@ import org.springframework.web.bind.annotation.*;
 import pl.skowrxn.cookie.admin.dto.WebsiteScanDTO;
 import pl.skowrxn.cookie.admin.service.WebsiteScanService;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @PreAuthorize("hasRole('USER')")
-@RequestMapping("/api/v1/admin/websites/{websiteId}/scan")
+@RequestMapping("/api/v1/admin/websites/{websiteId}/scans")
 @RequiredArgsConstructor
-public class CookieScanController {
+public class WebsiteScanController {
 
-    private final WebsiteScanService service;
+    private final WebsiteScanService websiteScanService;
 
     @PostMapping
     public ResponseEntity<WebsiteScanDTO> scanWebsite(@PathVariable UUID websiteId)  {
-        WebsiteScanDTO scanResult = service.scanCookies(websiteId);
+        WebsiteScanDTO scanResult = websiteScanService.scanCookies(websiteId);
         return ResponseEntity.ok(scanResult);
     }
+
+    @GetMapping
+    public ResponseEntity<List<WebsiteScanDTO>> getAllScans(@PathVariable UUID websiteId)  {
+        return ResponseEntity.ok(websiteScanService.getAllScans(websiteId));
+    }
+
 }
