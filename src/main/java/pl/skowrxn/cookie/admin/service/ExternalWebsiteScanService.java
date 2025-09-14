@@ -72,7 +72,7 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
         String url = website.getDomain();
         logger.info("Starting cookie scan for URL: {}", url);
         WebsiteScan websiteScan = new WebsiteScan();
-        websiteScan.setScanTime(new Date().toInstant());
+        websiteScan.setWebsite(website);
 
         String reportUrl = initiateCookieScan(url);
         if (reportUrl != null) {
@@ -93,6 +93,13 @@ public class ExternalWebsiteScanService implements WebsiteScanService {
         }
         websiteScanRepository.save(websiteScan);
         return modelMapper.map(websiteScan, WebsiteScanDTO.class);
+    }
+
+    @Override
+    public List<WebsiteScanDTO> getAllScans(UUID websiteId) {
+        return websiteScanRepository.findAllByWebsite_Id(websiteId).stream()
+                .map(scan -> modelMapper.map(scan, WebsiteScanDTO.class))
+                .toList();
     }
 
     public String initiateCookieScan(String url) {
