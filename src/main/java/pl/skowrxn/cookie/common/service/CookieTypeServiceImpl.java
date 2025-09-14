@@ -26,6 +26,7 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     private final CookieTypeRepository cookieTypeRepository;
     private final CookieTypeMetadataService cookieTypeMetadataService;
     private final WebsiteRepository websiteRepository;
+
     private final ModelMapper modelMapper;
     private static final Logger logger = LoggerFactory.getLogger(CookieTypeServiceImpl.class);
 
@@ -52,9 +53,7 @@ public class CookieTypeServiceImpl implements CookieTypeService {
 
     @Override
     public List<CookieTypeDTO> getAllCookieTypes(UUID websiteId) {
-        Website website = websiteRepository.findById(websiteId).orElseThrow(
-                () -> new ResourceNotFoundException("Website", "id", websiteId.toString()));
-
+        Website website = getWebsiteByIdOrThrow(websiteId);
         return cookieTypeRepository.findCookieTypesByWebsite(website).stream()
                 .map(cookieType -> modelMapper.map(cookieType, CookieTypeDTO.class))
                 .toList();
@@ -62,15 +61,14 @@ public class CookieTypeServiceImpl implements CookieTypeService {
 
     @Override
     public CookieTypeDTO getCookieTypeById(UUID id) {
-        CookieType cookieType = cookieTypeRepository.findCookieTypeById(id)
+        CookieType cookieType = cookieTypeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("CookieType", "id", id.toString()));
         return modelMapper.map(cookieType, CookieTypeDTO.class);
     }
 
     @Override
     public Optional<CookieType> findCookieTypeByKey(UUID websiteId, String key) {
-        Website website = websiteRepository.findById(websiteId).orElseThrow(
-                () -> new ResourceNotFoundException("Website", "id", websiteId.toString()));
+        Website website = getWebsiteByIdOrThrow(websiteId);
         return cookieTypeRepository.findCookieTypeByWebsiteAndKey(website, key);
     }
 
@@ -82,8 +80,7 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     @Override
     @Transactional
     public CookieTypeDTO updateCookieType(UUID id, CookieTypeRequestDTO cookieTypeDTO) {
-        CookieType existingCookieType = cookieTypeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("CookieType", "id", id.toString()));
+        CookieType existingCookieType = getCookieTypeOrThrow(id);
         Optional<CookieType> optionalDuplicate = cookieTypeRepository.findCookieTypeByKey(cookieTypeDTO.getKey());
         if (optionalDuplicate.isPresent() && !optionalDuplicate.get().getId().equals(cookieTypeDTO.getId())) {
             throw new BadRequestException("Cookie type with key " + cookieTypeDTO.getKey() + " already exists.");
@@ -116,16 +113,14 @@ public class CookieTypeServiceImpl implements CookieTypeService {
     @Override
     @Transactional
     public void deleteCookieType(UUID id) {
-        CookieType cookieType = cookieTypeRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("CookieType", "id", id.toString()));
+        CookieType cookieType = getCookieTypeOrThrow(id);
         cookieTypeRepository.delete(cookieType);
     }
 
     @Override
     @Transactional
     public CookieTypeDTO createCookieType(UUID websiteId, CookieTypeRequestDTO cookieTypeRequestDTO) {
-        Website website = websiteRepository.findById(websiteId).orElseThrow(
-                () -> new ResourceNotFoundException("Website", "id", websiteId.toString()));
+        Website website = getWebsiteByIdOrThrow(websiteId);
         if (cookieTypeRepository.existsCookieTypeByKey(cookieTypeRequestDTO.getKey())){
             throw new BadRequestException("Cookie type with key " + cookieTypeRequestDTO.getKey() + " already exists.");
         }
@@ -148,4 +143,16 @@ public class CookieTypeServiceImpl implements CookieTypeService {
         }
         cookieTypeRepository.save(cookieType);
     }
+
+    private Website getWebsiteByIdOrThrow(UUID websiteId) {
+        return websiteRepository.findById(websiteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Website", "id", websiteId.toString()));
+    }
+
+    private CookieType getCookieTypeOrThrow(UUID id) {
+        return cookieTypeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("CookieType", "id", id.toString()));
+    }
+
+
 }
