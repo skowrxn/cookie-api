@@ -90,7 +90,7 @@ public class ConsentServiceImpl implements ConsentService {
         } else if (allAccepted) {
             return ConsentStatus.ACCEPTED_ALL;
         }
-        return ConsentStatus.PARTIAL;
+        return ConsentStatus.PARTIALLY_ACCEPTED;
     }
 
 }
