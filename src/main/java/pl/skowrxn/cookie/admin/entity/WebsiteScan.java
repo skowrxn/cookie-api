@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import pl.skowrxn.cookie.common.entity.CookieType;
 
 import java.time.Instant;
@@ -17,12 +19,14 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class WebsiteScan {
 
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.UUID)
     private UUID id;
 
+    @CreatedDate
     @Column(nullable = false, name="scan_time")
     private Instant scanTime;
 
@@ -31,5 +35,9 @@ public class WebsiteScan {
 
     @Column(nullable = false, name = "total_cookies")
     private int totalCookies;
+
+    @ManyToOne
+    @JoinColumn(name = "website_id", nullable = false)
+    private Website website;
 
 }

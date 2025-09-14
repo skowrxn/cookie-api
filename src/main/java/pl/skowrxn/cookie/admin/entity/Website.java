@@ -44,6 +44,9 @@ public class Website {
     @OneToMany(mappedBy = "website", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Visitor> visitors;
 
+    @OneToMany(mappedBy = "website", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WebsiteScan> scans;
+
     @Column(name = "last_successful_scan_time")
     private Instant lastSuccessfulScanTime;
 
