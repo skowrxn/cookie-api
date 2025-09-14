@@ -14,11 +14,10 @@ import java.util.UUID;
 @NoArgsConstructor
 public class WebsiteDTO {
 
-    private String id;
+    private UUID id;
     private String key;
     private String domain;
     private UUID userId;
-    private BannerSettingsDTO bannerSettings;
     private Instant lastSuccessfulScanTime;
     private Boolean isBannerActive;
 
