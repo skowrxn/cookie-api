@@ -38,22 +38,16 @@ public class BannerSettingsServiceImpl implements BannerSettingsService {
 
     @Override
     public BannerSettingsDTO getBannerSettingsByWebsiteId(UUID websiteId) {
-        Website website = websiteRepository.findById(websiteId).orElseThrow(() ->
-                new ResourceNotFoundException("Website", "id", websiteId.toString()));
-        BannerSettings bannerSettings = bannerSettingsRepository.findById(website.getBannerSettings().getId()).
-                orElseThrow(() -> new ResourceNotFoundException("BannerSettings", "id",
-                        website.getBannerSettings().getId().toString()));
+        Website website = getWebsiteByIdOrThrow(websiteId);
+        BannerSettings bannerSettings = getBannerSettingsByIdOrThrow(website.getBannerSettings().getId());
         return modelMapper.map(bannerSettings, BannerSettingsDTO.class);
     }
 
     @Override
     @Transactional
     public BannerSettingsDTO updateBannerSettings(UUID websiteId, BannerSettingsDTO bannerSettingsDTO) {
-        Website website = websiteRepository.findById(websiteId).orElseThrow(() ->
-                new ResourceNotFoundException("Website", "id", websiteId.toString()));
-        BannerSettings bannerSettings = bannerSettingsRepository.findById(website.getBannerSettings().getId()).
-                orElseThrow(() -> new ResourceNotFoundException("BannerSettings", "id",
-                        website.getBannerSettings().getId().toString()));
+        Website website = getWebsiteByIdOrThrow(websiteId);
+        BannerSettings bannerSettings = getBannerSettingsByIdOrThrow(website.getBannerSettings().getId());
         bannerSettings.setBannerTitleText(bannerSettingsDTO.getBannerTitleText());
         bannerSettings.setBannerDescriptionText(bannerSettingsDTO.getBannerDescriptionText());
         bannerSettings.setAcceptAllButtonText(bannerSettingsDTO.getAcceptAllButtonText());
@@ -65,4 +59,15 @@ public class BannerSettingsServiceImpl implements BannerSettingsService {
         BannerSettings updatedBannerSettings = bannerSettingsRepository.save(bannerSettings);
         return modelMapper.map(updatedBannerSettings, BannerSettingsDTO.class);
     }
+
+    private Website getWebsiteByIdOrThrow(UUID websiteId) {
+        return websiteRepository.findById(websiteId).orElseThrow(() ->
+                new ResourceNotFoundException("Website", "id", websiteId.toString()));
+    }
+
+    private BannerSettings getBannerSettingsByIdOrThrow(UUID id) {
+        return bannerSettingsRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("BannerSettings", "id", id.toString()));
+    }
+
 }
