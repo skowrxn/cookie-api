@@ -15,9 +15,7 @@ import java.util.UUID;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "visitors", indexes = {
-        @Index(name = "idx_visitor_token", columnList = "token")
-})
+@Table(name = "visitors")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,8 +26,8 @@ public class Visitor {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "token", unique = true, nullable = false)
-    private String token;
+    @Column(name = "consent_id", unique = true, nullable = false)
+    private String consentId;
 
     @Column(name = "ip", nullable = false)
     private String ip;
