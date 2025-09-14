@@ -5,14 +5,15 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import pl.skowrxn.cookie.admin.dto.WebsiteDTO;
+import pl.skowrxn.cookie.admin.dto.response.WebsiteDetailsResponse;
 import pl.skowrxn.cookie.admin.entity.User;
 import pl.skowrxn.cookie.admin.entity.Website;
 import pl.skowrxn.cookie.admin.repository.WebsiteRepository;
 import pl.skowrxn.cookie.common.exception.ResourceNotFoundException;
 import pl.skowrxn.cookie.common.service.CookieTypeService;
+import pl.skowrxn.cookie.consent.entity.ConsentStatus;
 
 import java.security.SecureRandom;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +25,7 @@ public class WebsiteServiceImpl implements WebsiteService {
     private final WebsiteRepository websiteRepository;
     private final CookieTypeService cookieTypeService;
     private final BannerSettingsService bannerSettingsService;
+    private final VisitorService visitorService;
 
     private final ModelMapper modelMapper;
 
@@ -55,6 +57,21 @@ public class WebsiteServiceImpl implements WebsiteService {
         website.setIsBannerActive(isActive);
         websiteRepository.save(website);
         return mapToDTO(website);
+    }
+
+    @Override
+    public WebsiteDetailsResponse getWebsiteDetailsById(UUID id) {
+        Website website = getWebsiteEntityById(id);
+
+        int accepted = visitorService.getConsentsCount(id, ConsentStatus.ACCEPTED_ALL);
+        int partiallyAccepted = visitorService.getConsentsCount(id, ConsentStatus.PARTIALLY_ACCEPTED);
+        int rejected = visitorService.getConsentsCount(id, ConsentStatus.REJECTED_ALL);
+
+        WebsiteDetailsResponse response = modelMapper.map(website, WebsiteDetailsResponse.class);
+        response.setAcceptedConsents(accepted);
+        response.setPartiallyAcceptedConsents(partiallyAccepted);
+        response.setRejectedConsents(rejected);
+        return response;
     }
 
     @Override
