@@ -11,6 +11,7 @@ import pl.skowrxn.cookie.admin.dto.VisitorDTO;
 import pl.skowrxn.cookie.admin.dto.VisitorListEntryDTO;
 import pl.skowrxn.cookie.admin.dto.response.VisitorListResponse;
 import pl.skowrxn.cookie.common.exception.ResourceNotFoundException;
+import pl.skowrxn.cookie.consent.entity.ConsentStatus;
 import pl.skowrxn.cookie.consent.entity.Visitor;
 import pl.skowrxn.cookie.consent.repository.VisitorRepository;
 
@@ -59,4 +60,10 @@ public class VisitorServiceImpl implements VisitorService {
         );
         return modelMapper.map(visitor, VisitorDTO.class);
     }
+
+    @Override
+    public Integer getConsentsCount(UUID websiteId, ConsentStatus consentStatus) {
+        return visitorRepository.countByWebsite_IdAndStatus(websiteId, consentStatus);
+    }
+
 }

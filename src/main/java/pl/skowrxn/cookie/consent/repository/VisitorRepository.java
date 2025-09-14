@@ -3,6 +3,7 @@ package pl.skowrxn.cookie.consent.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import pl.skowrxn.cookie.consent.entity.ConsentStatus;
 import pl.skowrxn.cookie.consent.entity.Visitor;
 
 import java.util.Optional;
@@ -16,4 +17,5 @@ public interface VisitorRepository extends JpaRepository<Visitor, UUID> {
 
     Page<Visitor> findVisitorByWebsite_Id(UUID websiteId, Pageable pageable);
 
+    Integer countByWebsite_IdAndStatus(UUID websiteId, ConsentStatus status);
 }
