@@ -36,7 +36,9 @@ public class AuthTokenFilter extends OncePerRequestFilter {
 
         if (path.startsWith("/api/v1/public")
                 || path.startsWith("/api/v1/auth/login")
-                || path.startsWith("/api/v1/auth/register")) {
+                || path.startsWith("/api/v1/auth/register")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/swagger-ui")) {
             filterChain.doFilter(request, response);
             return;
         }
