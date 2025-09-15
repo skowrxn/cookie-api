@@ -31,7 +31,7 @@ public class ConsentExportService {
         List<Visitor> visitors = website.get().getVisitors();
 
         try (CSVWriter writer = new CSVWriter(new StringWriter())){
-            writer.writeNext(new String[] {"Visitor ID,Visitor Token,IP Address,User Agent,Consent Time,Consents"});
+            writer.writeNext(new String[] {"Visitor ID,ConsentId,IP Address,User Agent,Consent Time,Consents"});
             for (Visitor visitor : visitors) {
 
                 StringBuilder consents = new StringBuilder();
@@ -47,7 +47,7 @@ public class ConsentExportService {
 
                 writer.writeNext(new String[]{
                         visitor.getId().toString(),
-                        visitor.getToken(),
+                        visitor.getConsentId(),
                         visitor.getIp(),
                         visitor.getUserAgent(),
                         formattedDate,
